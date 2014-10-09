@@ -1,0 +1,106 @@
+---
+title: "Reproducible Research: Peer Assessment 1"
+output: 
+  html_document:
+    keep_md: true
+---
+
+
+## Loading and preprocessing the data
+
+```{r}
+library(plyr)
+setwd("~/Coursera/RepData_PeerAssessment1")
+data <- read.csv("activity.csv")
+summary(data)
+clean_data <- na.omit(data)
+summary(clean_data)
+```
+
+## What is mean total number of steps taken per day?
+
+```{r}
+daily_data <- ddply(clean_data, "date", summarize, sum_of_steps = sum(steps))
+
+hist(daily_data$sum_of_steps, xlab = "Daily Step Count", ylab = "Number of Days", main = "Step Count Histogram")
+
+mean(daily_data$sumofsteps)
+
+median(daily_data$sumofsteps)
+```
+
+## What is the average daily activity pattern?
+
+```{r}
+interval_data <- ddply(clean_data, "interval", summarize, average = mean(steps))
+
+plot (interval_data$interval, interval_data$average, type = "l", xlab = "Interval", ylab = "Steps")
+
+max_interval_value = max(interval_data$average)
+
+max_interval_subset = subset (interval_data, interval_data$average == max_interval_value)
+
+max_interval = max_interval_subset$interval
+
+```
+
+## Imputing missing values
+```{r}
+
+number_of_NA <- length(which(is.na(data$steps)))
+
+interval_mean <- ddply(clean_data, "interval", summarize, value = mean(steps))
+
+imput_data <- data
+
+for (counter in 1:nrow(imput_data))
+  {if (is.na(imput_data$steps[counter])) 
+    {imput_data$steps[counter] <- interval_mean$value[(counter %% 288) + 1]}
+  }
+
+summary(data)
+summary(imput_data)
+
+```
+
+
+## Are there differences in activity patterns between weekdays and weekends?
+
+```{r}
+day_of_week_data <- cbind(imput_data, weekdays(as.POSIXct(imput_data$date)))
+
+names(day_of_week_data)[4] <- paste("day")
+
+day_or_end_data <- cbind(day_of_week_data, 1)
+
+names(day_or_end_data)[5] <- paste("value")
+
+for (counter in 1:nrow(day_or_end_data))
+  {if (day_or_end_data$day[counter] == "Saturday") {day_or_end_data$value[counter] = 2}
+   else if (day_or_end_data$day[counter] == "Sunday") {day_or_end_data$value[counter] = 2}
+   else {day_or_end_data$value[counter] = as.factor(1)}
+  }
+
+day_or_end_data$value <- as.factor(day_or_end_data$value)
+
+levels(day_or_end_data$value) = c("Weekday", "Weekend")
+
+summary(day_or_end_data)
+
+end_or_day_interval_data <- ddply(day_or_end_data, .(interval, value), summarize, average = mean(steps))
+
+
+plot(end_or_day_interval_data$interval, end_or_day_interval_data$average, col=end_or_day_interval_data$value, type = "l")
+
+weekday_data = subset(end_or_day_interval_data, end_or_day_interval_data$value == "Weekday")
+weekend_data = subset(end_or_day_interval_data, end_or_day_interval_data$value == "Weekend")
+
+
+par(mfrow = c(2,1))
+#upper plot
+plot(weekday_data$interval, weekday_data$average, type="l", xlab="Interval", ylab="Average Steps", main="Weekdays")
+#lower plot
+plot(weekend_data$interval, weekend_data$average, type="l", xlab="Interval", ylab="Average Steps", main="Weekends")
+
+```
+
