@@ -24,9 +24,9 @@ daily_data <- ddply(clean_data, "date", summarize, sum_of_steps = sum(steps))
 
 hist(daily_data$sum_of_steps, xlab = "Daily Step Count", ylab = "Number of Days", main = "Step Count Histogram")
 
-mean(daily_data$sumofsteps)
+mean(daily_data$sum_of_steps)
 
-median(daily_data$sumofsteps)
+median(daily_data$sum_of_steps)
 ```
 
 ## What is the average daily activity pattern?

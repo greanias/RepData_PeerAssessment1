@@ -50,27 +50,19 @@ hist(daily_data$sum_of_steps, xlab = "Daily Step Count", ylab = "Number of Days"
 ![plot of chunk unnamed-chunk-2](./PA1_files/figure-html/unnamed-chunk-2.png) 
 
 ```r
-mean(daily_data$sumofsteps)
+mean(daily_data$sum_of_steps)
 ```
 
 ```
-## Warning: argument is not numeric or logical: returning NA
-```
-
-```
-## [1] NA
+## [1] 10766
 ```
 
 ```r
-median(daily_data$sumofsteps)
+median(daily_data$sum_of_steps)
 ```
 
 ```
-## Warning: is.na() applied to non-(list or vector) of type 'NULL'
-```
-
-```
-## NULL
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
