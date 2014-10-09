@@ -3,6 +3,8 @@
 
 ## Loading and preprocessing the data
 
+Data was read in from the activity.csv file.  A clean copy was made by removing all NA occurrences.
+
 
 ```r
 library(plyr)
@@ -40,6 +42,10 @@ summary(clean_data)
 
 ## What is mean total number of steps taken per day?
 
+From the clean data set, daily step values were summed.
+
+The mean number of steps taken was 10766.  The median number of steps was 10765.
+
 
 ```r
 daily_data <- ddply(clean_data, "date", summarize, sum_of_steps = sum(steps))
@@ -67,6 +73,8 @@ median(daily_data$sum_of_steps)
 
 ## What is the average daily activity pattern?
 
+The number of steps for each five minute interval were summed across each day. The resultant graph shows the average number of steps taken during the average day.
+
 
 ```r
 interval_data <- ddply(clean_data, "interval", summarize, average = mean(steps))
@@ -86,18 +94,10 @@ max_interval = max_interval_subset$interval
 
 ## Imputing missing values
 
+There were 2304 step values missing from the original data set.  These were assigned the average from existing values in the same interval across other days.  Mean and median values were both 10766.
+
+
 ```r
-number_of_NA <- length(which(is.na(data$steps)))
-
-interval_mean <- ddply(clean_data, "interval", summarize, value = mean(steps))
-
-imput_data <- data
-
-for (counter in 1:nrow(imput_data))
-  {if (is.na(imput_data$steps[counter])) 
-    {imput_data$steps[counter] <- interval_mean$value[(counter %% 288) + 1]}
-  }
-
 summary(data)
 ```
 
@@ -113,6 +113,17 @@ summary(data)
 ```
 
 ```r
+number_of_NA <- length(which(is.na(data$steps)))
+
+interval_mean <- ddply(clean_data, "interval", summarize, value = mean(steps))
+
+imput_data <- data
+
+for (counter in 1:nrow(imput_data))
+  {if (is.na(imput_data$steps[counter])) 
+    {imput_data$steps[counter] <- interval_mean$value[(counter %% 288) + 1]}
+  }
+
 summary(imput_data)
 ```
 
@@ -127,8 +138,34 @@ summary(imput_data)
 ##                  (Other)   :15840
 ```
 
+```r
+imput_daily_data <- ddply(imput_data, "date", summarize, sum_of_steps = sum(steps))
+
+hist(imput_daily_data$sum_of_steps, xlab = "Daily Step Count", ylab = "Number of Days", main = "Step Count Histogram")
+```
+
+![plot of chunk unnamed-chunk-4](./PA1_files/figure-html/unnamed-chunk-4.png) 
+
+```r
+mean(imput_daily_data$sum_of_steps)
+```
+
+```
+## [1] 10766
+```
+
+```r
+median(imput_daily_data$sum_of_steps)
+```
+
+```
+## [1] 10766
+```
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+Weekday and weekend data was split and graphed to identify patterns specific to each time frame.
 
 
 ```r
