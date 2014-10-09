@@ -183,16 +183,8 @@ summary(day_or_end_data)
 ```r
 end_or_day_interval_data <- ddply(day_or_end_data, .(interval, value), summarize, average = mean(steps))
 
-
-plot(end_or_day_interval_data$interval, end_or_day_interval_data$average, col=end_or_day_interval_data$value, type = "l")
-```
-
-![plot of chunk unnamed-chunk-5](./PA1_files/figure-html/unnamed-chunk-51.png) 
-
-```r
 weekday_data = subset(end_or_day_interval_data, end_or_day_interval_data$value == "Weekday")
 weekend_data = subset(end_or_day_interval_data, end_or_day_interval_data$value == "Weekend")
-
 
 par(mfrow = c(2,1))
 #upper plot
@@ -201,5 +193,5 @@ plot(weekday_data$interval, weekday_data$average, type="l", xlab="Interval", yla
 plot(weekend_data$interval, weekend_data$average, type="l", xlab="Interval", ylab="Average Steps", main="Weekends")
 ```
 
-![plot of chunk unnamed-chunk-5](./PA1_files/figure-html/unnamed-chunk-52.png) 
+![plot of chunk unnamed-chunk-5](./PA1_files/figure-html/unnamed-chunk-5.png) 
 
